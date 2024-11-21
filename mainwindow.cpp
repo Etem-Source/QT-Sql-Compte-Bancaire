@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "loginwindow.h"  // pour pouvoir revenir à la page de connexion
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QtSql/QSqlQuery>
@@ -8,6 +9,10 @@
 #include <QWidget>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QApplication>
+#include <QScreen>
 
 MainWindow::MainWindow(int clientId, QWidget *parent)
     : QMainWindow(parent), clientId(clientId)
@@ -42,7 +47,7 @@ MainWindow::MainWindow(int clientId, QWidget *parent)
     QAction *creditAction = new QAction("Crédit", this);
     QAction *debitAction = new QAction("Débit", this);
     QAction *transferAction = new QAction("Virement", this);
-    QAction *infoAction = new QAction("Consulter Compte", this);
+    QAction *infoAction = new QAction("Consulter Solde", this);
 
     connect(creditAction, &QAction::triggered, this, &MainWindow::credit);
     connect(debitAction, &QAction::triggered, this, &MainWindow::debit);
@@ -55,7 +60,7 @@ MainWindow::MainWindow(int clientId, QWidget *parent)
     operationMenu->addAction(infoAction);
 
     QMenu *accountMenu = new QMenu("Compte", this);
-    QAction *viewInfoAction = new QAction("Consulter Client", this);
+    QAction *viewInfoAction = new QAction("Consulter Informations", this);
     QAction *editCinAction = new QAction("Modifier CIN", this);
     QAction *editCodeSecretAction = new QAction("Modifier Code Secret", this);
 
@@ -67,15 +72,34 @@ MainWindow::MainWindow(int clientId, QWidget *parent)
     accountMenu->addAction(editCinAction);
     accountMenu->addAction(editCodeSecretAction);
 
+    QMenu *optionsMenu = new QMenu("Options", this);
+    QAction *logoutAction = new QAction("Se déconnecter", this);
+    QAction *creditsAction = new QAction("Crédit", this);
+
+    connect(logoutAction, &QAction::triggered, this, &MainWindow::logout);
+    connect(creditsAction, &QAction::triggered, this, &MainWindow::showCredits);
+
+    optionsMenu->addAction(logoutAction);
+    optionsMenu->addAction(creditsAction);
+
     menuBar->addMenu(operationMenu);
     menuBar->addMenu(accountMenu);
+    menuBar->addMenu(optionsMenu);
     setMenuBar(menuBar);
 
     // Afficher le message de bienvenue et le solde
     majInfo();
+    // Centrer la fenêtre
+    centerWindow();
 }
 
-
+void MainWindow::centerWindow()
+{
+    QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
+    int x = (screenGeometry.width() - width()) / 2;
+    int y = (screenGeometry.height() - height()) / 2;
+    move(x, y);
+}
 
 void MainWindow::credit()
 {
@@ -114,8 +138,6 @@ void MainWindow::debit()
         }
     }
 }
-
-
 
 void MainWindow::transfer()
 {
@@ -204,8 +226,6 @@ bool MainWindow::verifyCodeSecret()
     return false;
 }
 
-
-
 void MainWindow::viewInfo()
 {
     QSqlQuery query;
@@ -228,7 +248,6 @@ void MainWindow::viewInfo()
     }
 }
 
-
 void MainWindow::viewFullInfo()
 {
     QSqlQuery query;
@@ -243,7 +262,7 @@ void MainWindow::viewFullInfo()
         double solde = query.value(4).toDouble();
         QString rib = query.value(5).toString();
 
-        QString info = QString("Nom: %1\nPrénom: %2\nCIN: %3\nTéléphone: %4\nSolde: %5 €\nRIB: %6")
+        QString info = QString("Nom: %1\nPrénom: %2\nCIN: %3\nTéléphone: +33 %4\nSolde: %5 €\nRIB: %6")
                         .arg(nom)
                         .arg(prenom)
                         .arg(cin)
@@ -314,4 +333,26 @@ void MainWindow::editCodeSecret()
             }
         }
     }
+}
+
+void MainWindow::logout()
+{
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Déconnexion", QString("Êtes-vous sûr de vouloir vous déconnecter ?"), QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+        LoginWindow *loginWindow = new LoginWindow();
+        loginWindow->show();
+        this->close();
+    }
+    else if (reply == QMessageBox::No)
+    {
+        QMessageBox::information(this, ":)", "J'ai toujours su que vous vouliez rester !");
+    }
+}
+
+void MainWindow::showCredits()
+{
+    QMessageBox::information(this, "Crédit", "Développé par Etem ! \nGitHub : @Etem-Source");
+    QDesktopServices::openUrl(QUrl("https://github.com/Etem-Source"));
 }
