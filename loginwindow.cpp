@@ -6,13 +6,14 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 #include <QDebug>
-#include <QLabel>
-#include <QHBoxLayout>
+#include <QScreen>
+#include <QApplication>
 
 LoginWindow::LoginWindow(QWidget *parent) : QWidget(parent)
 {
     setWindowTitle("Connexion");
     resize(400, 300);
+    setFixedSize(400, 300);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -29,17 +30,26 @@ LoginWindow::LoginWindow(QWidget *parent) : QWidget(parent)
     codeSecretEdit->setEchoMode(QLineEdit::Password);
     layout->addWidget(codeSecretEdit);
 
-    QHBoxLayout *passwordLayout = new QHBoxLayout();
     showPasswordCheckBox = new QCheckBox("Afficher le mot de passe", this);
+    layout->addWidget(showPasswordCheckBox);
     connect(showPasswordCheckBox, &QCheckBox::stateChanged, this, &LoginWindow::togglePasswordVisibility);
-    passwordLayout->addWidget(showPasswordCheckBox);
-    layout->addLayout(passwordLayout);
 
-    QPushButton *loginButton = new QPushButton("Connexion", this);
-    connect(loginButton, &QPushButton::clicked, this, &LoginWindow::login);
+    loginButton = new QPushButton("Connexion", this);
     layout->addWidget(loginButton);
+    connect(loginButton, &QPushButton::clicked, this, &LoginWindow::login);
 
     setLayout(layout);
+
+    // Centrer la fenêtre
+    centerWindow();
+}
+
+void LoginWindow::centerWindow()
+{
+    QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
+    int x = (screenGeometry.width() - width()) / 2;
+    int y = (screenGeometry.height() - height()) / 2;
+    move(x, y);
 }
 
 void LoginWindow::togglePasswordVisibility()
@@ -67,7 +77,6 @@ void LoginWindow::login()
         return;
     }
 
-    // Vérification du CIN et du Code Secret
     QSqlQuery query;
     query.prepare("SELECT cl.id, cl.nom, cl.prenom FROM clients cl JOIN comptes c ON cl.compte_id = c.id WHERE cl.cin = :cin AND c.code_secret = :code_secret");
     query.bindValue(":cin", cin);
@@ -88,6 +97,7 @@ void LoginWindow::login()
         mainWindow->show();
         this->close();
     } else {
+        loginButton->setStyleSheet("QPushButton { background-color: #ff0000; }"); // Rougir le bouton
         QMessageBox::warning(this, "Erreur", "CIN ou Code Secret incorrect");
     }
 }
