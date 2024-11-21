@@ -97,7 +97,8 @@ void LoginWindow::login()
         mainWindow->show();
         this->close();
     } else {
-        loginButton->setStyleSheet("QPushButton { background-color: #ff0000; }"); // Rougir le bouton
+        loginButton->setStyleSheet("QPushButton { background-color: #ff0000; }"); // Rouge
         QMessageBox::warning(this, "Erreur", "CIN ou Code Secret incorrect");
+        loginButton->setStyleSheet("QPushButton { background-color: #4CAF50; }"); // Vert
     }
 }
