@@ -17,9 +17,11 @@ private slots:
     void transfer();
     void viewInfo();
     void viewFullInfo();
+    void majInfo();
     void editCin();
     void editCodeSecret();
-    void majInfo();
+    void logout();
+    void showCredits();
 
 private:
     int clientId;
@@ -27,6 +29,8 @@ private:
     QLabel *balanceLabel;
 
     bool verifyCodeSecret();
+
+    void centerWindow();
 };
 
 #endif // MAINWINDOW_H
