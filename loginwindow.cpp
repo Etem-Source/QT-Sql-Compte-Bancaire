@@ -66,15 +66,19 @@ void LoginWindow::login()
     QString cin = cinEdit->text();
     QString codeSecret = codeSecretEdit->text();
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("localhost");
-    db.setDatabaseName("QTBDD");
-    db.setUserName("qtsql");
-    db.setPassword("Qtsql?99");
+    QSqlDatabase db = QSqlDatabase::database();
+    if(!db.isOpen())
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+        db.setHostName("localhost");
+        db.setDatabaseName("QTBDD");
+        db.setUserName("qtsql");
+        db.setPassword("Qtsql?99");
 
-    if (!db.open()) {
-        QMessageBox::critical(this, "Erreur", "Connexion à la base de données échouée: " + db.lastError().text());
-        return;
+        if (!db.open()) {
+            QMessageBox::critical(this, "Erreur", "Connexion à la base de données échouée: " + db.lastError().text());
+            return;
+        }
     }
 
     QSqlQuery query;
