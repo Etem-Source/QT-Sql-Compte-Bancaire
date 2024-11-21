@@ -21,6 +21,9 @@ private:
     QLineEdit *cinEdit;
     QLineEdit *codeSecretEdit;
     QCheckBox *showPasswordCheckBox;
+    QPushButton *loginButton;
+
+    void centerWindow();
 };
 
 #endif // LOGINWINDOW_H
