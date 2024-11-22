@@ -12,6 +12,6 @@ QPushButton:hover {
 
 QCheckBox {
     padding: 5px;
-    color: #333;
+    color: #a6a4a4;
 }
 
