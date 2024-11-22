@@ -30,7 +30,7 @@ LoginWindow::LoginWindow(QWidget *parent) : QWidget(parent)
     codeSecretEdit->setEchoMode(QLineEdit::Password);
     layout->addWidget(codeSecretEdit);
 
-    showPasswordCheckBox = new QCheckBox("Afficher le mot de passe", this);
+    showPasswordCheckBox = new QCheckBox("Afficher le code secret", this);
     layout->addWidget(showPasswordCheckBox);
     connect(showPasswordCheckBox, &QCheckBox::stateChanged, this, &LoginWindow::togglePasswordVisibility);
 
