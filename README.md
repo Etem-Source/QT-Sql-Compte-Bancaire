@@ -27,7 +27,7 @@ Ce projet permet d'effectuer les tâches suivantes :
 * Avoir MySQL
 * Télécharger bdd-banque-qt.sql
 * Importer la base de données dans votre serveur MySQL :
-  * mysql -u username* -p db_name* < MySQL-CompteBancaire.sql
+  * mysql -u username* -p db_name* < bdd-banque-qt.sql
     
 *username = votre nom d'utilisateur.
 *db_name = le nom de la bdd où vous souhaitez l'importer.
