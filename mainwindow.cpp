@@ -177,7 +177,7 @@ void MainWindow::transfer()
             QMessageBox::StandardButton reply;
             reply = QMessageBox::question(this, "Confirmation", QString("Vous voulez bien transférer %1 € à %2 %3 avec le RIB %4 ?").arg(amount).arg(prenom).arg(nom).arg(recipientRIB), QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes) {
-                QSqlDatabase::database().transaction();
+                QSqlDatabase::database().transaction(); // Avec une transaction, on garantit que soit tout réussit, soit rien ne change, ce qui est crucial dans des opérations financières.
                 QSqlQuery debitQuery;
                 debitQuery.prepare("UPDATE comptes SET solde = solde - :amount WHERE id = (SELECT compte_id FROM clients WHERE id = :client_id) AND solde >= :amount - 50");
                 debitQuery.bindValue(":amount", amount);
